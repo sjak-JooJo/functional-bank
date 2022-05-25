@@ -39,11 +39,17 @@ function updateTotalField(totalFieldId,amount){
     const previousTotal = parseFloat(totalText);
     totaElement.innerText = previousTotal + amount;
 }
-
-function updateBalance(amount, isAdd){
+function getCurrentBalance(){
     const balanceTotal = document.getElementById('balance-total');
     const balanceTotalText = balanceTotal.innerText;
     const previousBalanceTotal = parseFloat(balanceTotalText);
+    return previousBalanceTotal;
+}
+function updateBalance(amount, isAdd){
+    const balanceTotal = document.getElementById('balance-total');
+    /* const balanceTotalText = balanceTotal.innerText;
+    const previousBalanceTotal = parseFloat(balanceTotalText); */
+    const previousBalanceTotal = getCurrentBalance();
     if(isAdd == true){
         balanceTotal.innerText = previousBalanceTotal + amount;
     }
@@ -76,9 +82,10 @@ document.getElementById('deposit-button').addEventListener('click', function(){
     balanceTotal.innerText = previousBalanceTotal + depositAmount; */
 
     const depositAmount = getInputValue('deposit-input');
-    updateTotalField('deposit-total',depositAmount);
-    updateBalance(depositAmount, true);
-    
+    if(depositAmount > 0){
+        updateTotalField('deposit-total',depositAmount);
+        updateBalance(depositAmount, true);
+    }
 
 });
 
@@ -106,8 +113,12 @@ document.getElementById('withdraw-button').addEventListener('click', function(){
     balanceTotal.innerText = previousBalanceTotal - withdrawAmout; */
 
     const withdrawAmout = getInputValue('withdraw-input');
-    updateTotalField('withdraw-total',withdrawAmout);
-    updateBalance(withdrawAmout, false);
-
-  
+    const currentBalance = getCurrentBalance();
+    if(withdrawAmout > 0 && withdrawAmout < currentBalance){
+        updateTotalField('withdraw-total',withdrawAmout);
+        updateBalance(withdrawAmout, false);
+    }
+    if(withdrawAmout > currentBalance){
+        console.log("You dont have enough money to withdraw");
+    }
 });
